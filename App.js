@@ -22,8 +22,7 @@ function App() {
                     component={ExploreScreen} 
                 />
                 <Stack.Screen 
-                    options={{ headerShown: false }}
-                    name="RecipeDetails" 
+                    name="RecipeDetails"
                     component={RecipeDetails} 
                 />
         </Stack.Navigator>
