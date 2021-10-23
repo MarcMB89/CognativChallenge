@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
     Text,
     View, 
@@ -9,11 +9,27 @@ import {
     ScrollView, 
     StatusBar } from "react-native";
 
+import { useDispatch, useSelector } from "react-redux";
+import { loadRecipes, loadRecommended } from "../../redux/actions/actionCreator";
+
 import styles from "./homeStyles";
 
 const recommendations = [
-    {
-        "_id": "52944",
+  {
+    "_id": "ergegssdegew",
+    "name": "Oxtail with broad beans",
+    "categoryId": "2",
+    "categoryName": "Meat",
+    "duration": 11,
+    "complexity": "Hard",
+    "people": 3,
+    "ingredients": "2 eggs\r\n4 tomatoes\r\nsalt\r\npepper",
+    "description":
+        "Toss the oxtail with the onion, spring onion, garlic, ginger, chilli, soy sauce, thyme, salt and pepper. Heat the vegetable oil in a large frying pan over medium-high heat. Brown the oxtail in the pan until browned all over, about 10 minutes. Place into a pressure cooker, and pour in 375ml water. Cook at pressure for 25 minutes, then remove from heat, and remove the lid according to manufacturer's directions.\r\nAdd the broad beans and pimento berries, and bring to a simmer over medium-high heat. Dissolve the cornflour in 2 tablespoons water, and stir into the simmering oxtail. Cook and stir a few minutes until the sauce has thickened, and the broad beans are tender.",
+    "photo": "https://www.themealdb.com/images/media/meals/1520083578.jpg",
+  },
+  {
+        "_id": "gregegdfdfe",
         "name": "Escovitch Fish",
         "categoryId": "1",
         "categoryName": "Fish",
@@ -27,20 +43,7 @@ const recommendations = [
         "photo": "https://www.themealdb.com/images/media/meals/1520084413.jpg",
     },
     {
-        "_id": "52943",
-        "name": "Oxtail with broad beans",
-        "categoryId": "2",
-        "categoryName": "Meat",
-        "duration": 11,
-        "complexity": "Hard",
-        "people": 3,
-        "ingredients": "2 eggs\r\n4 tomatoes\r\nsalt\r\npepper",
-        "description":
-            "Toss the oxtail with the onion, spring onion, garlic, ginger, chilli, soy sauce, thyme, salt and pepper. Heat the vegetable oil in a large frying pan over medium-high heat. Brown the oxtail in the pan until browned all over, about 10 minutes. Place into a pressure cooker, and pour in 375ml water. Cook at pressure for 25 minutes, then remove from heat, and remove the lid according to manufacturer's directions.\r\nAdd the broad beans and pimento berries, and bring to a simmer over medium-high heat. Dissolve the cornflour in 2 tablespoons water, and stir into the simmering oxtail. Cook and stir a few minutes until the sauce has thickened, and the broad beans are tender.",
-        "photo": "https://www.themealdb.com/images/media/meals/1520083578.jpg",
-    },
-    {
-        "_id": "52942",
+        "_id": "52werwfgdf942",
         "name": "Roast fennel and aubergine paella",
         "categoryId": "3",
         "categoryName": "Rices",
@@ -54,7 +57,7 @@ const recommendations = [
         "photo": "https://www.themealdb.com/images/media/meals/1520081754.jpg",
     },
     {
-        "_id": "52936",
+        "_id": "529rergdddderg6",
         "name": "Saltfish and Ackee",
         "categoryId": "1",
         "categoryName": "Fish",
@@ -68,7 +71,7 @@ const recommendations = [
           "https://www.themealdb.com/images/media/meals/vytypy1511883765.jpg",
       },
       {
-        "_id": "52935",
+        "_id": "wefwfw35",
         "name": "Steak Diane",
         "categoryId": "3",
         "categoryName": "Meat",
@@ -84,21 +87,21 @@ const recommendations = [
 ];
 
 const fakeRecipes = [
-    {
-      "_id": "52944",
-      "name": "Escovitch Fish",
-      "categoryId": "1",
-      "categoryName": "Fish",
-      "duration": 11,
-      "complexity": "Hard",
-      "people": 3,
-      "recommended": 1,
-      "ingredients": "2 eggs\r\n4 tomatoes\r\nsalt\r\npepper",
-      "description":
+  {
+    "_id": "gregegdfdfe",
+    "name": "Escovitch Fish",
+    "categoryId": "1",
+    "categoryName": "Fish",
+    "duration": 11,
+    "complexity": "Hard",
+    "people": 3,
+    "recommended": 1,
+    "ingredients": "2 eggs\r\n4 tomatoes\r\nsalt\r\npepper",
+    "description":
         "Rinse fish; rub with lemon or lime, seasoned with salt and pepper or use your favorite seasoning. I used creole seasoning. Set aside or place in the oven to keep it warm until sauce is ready.\r\n\r\nIn large skillet heat oil over medium heat, until hot, add the fish, cook each side- for about 5-7 minutes until cooked through and crispy on both sides. Remove fish and set aside. Drain oil and leave about 2-3 tablespoons of oil\r\nAdd, bay leave, garlic and ginger, stir-fry for about a minute making sure the garlic does not burn\r\nThen add onion, bell peppers, thyme, scotch bonnet, sugar, all spice-continue stirring for about 2-3 minutes. Add vinegar, mix an adjust salt and pepper according to preference. Let it simmer for about 2 more minutes. \r\n\r\nDiscard bay leave, thyme spring and serve over fish with a side of this bammy. You may make the sauce about 2 days in advance.",
-      "photo": "https://www.themealdb.com/images/media/meals/1520084413.jpg",
-    },
-    {
+    "photo": "https://www.themealdb.com/images/media/meals/1520084413.jpg",
+  },  
+  {
       "_id": "52943",
       "name": "Oxtail with broad beans",
       "categoryId": "2",
@@ -229,6 +232,22 @@ const fakeRecipes = [
 
 function ExploreScreen ({ navigation }) {
 
+  const recommended = useSelector((store) => store.recommended);
+  const recipes = useSelector((store) => store.recipes);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (recommended.length < 1) {
+      dispatch(loadRecommended());
+    }
+  }, [recommended, dispatch]);
+
+  useEffect(() => {
+    if (recipes.length < 1) {
+      dispatch(loadRecipes());
+    }
+  }, [recipes, dispatch]);
+
   const onPressHandlerDetails = () => {
     navigation.navigate("RecipeDetails");
   };
@@ -281,7 +300,7 @@ function ExploreScreen ({ navigation }) {
         ListHeaderComponent={renderRecommended}
         showsVerticalScrollIndicator={false}
         keyExtractor={keyExtractor}
-        data={fakeRecipes}
+        data={recipes}
         renderItem={renderRow}
       />
     );
@@ -297,7 +316,7 @@ function ExploreScreen ({ navigation }) {
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.scroller}
             >
-                {recommendations.map(item => {
+                {recommended.map(item => {
                 return (
                     <TouchableOpacity onPress={onPressHandlerDetails}>
                         <View style={styles.recipeImageBox}>{renderImageBox(item)}</View>
